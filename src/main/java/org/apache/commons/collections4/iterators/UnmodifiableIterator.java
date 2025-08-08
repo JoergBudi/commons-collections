@@ -46,7 +46,12 @@ public final class UnmodifiableIterator<E, T extends Iterator<? extends E>> impl
      */
     public static <E> Iterator<E> unmodifiableIterator(final Iterator<? extends E> iterator) {
         Objects.requireNonNull(iterator, "iterator");
-        if (iterator instanceof Unmodifiable) {
+        if (iterator instanceof IteratorChain) {
+            final IteratorChain<? extends E> oldIteratorChain = (IteratorChain<? extends E>) iterator;
+            final IteratorChain<? extends E> newIteratorChain = new IteratorChain<E>();
+            newIteratorChain.addMembersUnmodifiable(oldIteratorChain);
+            return (Iterator<E>) newIteratorChain;
+        } else if (iterator instanceof Unmodifiable) {
             @SuppressWarnings("unchecked") // safe to upcast
             final Iterator<E> tmpIterator = (Iterator<E>) iterator;
             return tmpIterator;
